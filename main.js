@@ -10,34 +10,40 @@ class Main {
     // console.log(BotState);
     this.users = {};
   }
-
-  async getOrFetchUserCreatedDate(username, userId) {
+  async getOrFetchCreationDate(username, userId) {
     let creationDate = this.users[username];
-    console.log('creation-date-before', creationDate);
     if (_.isNil(creationDate)) {
       creationDate = await this.getCreationDateFromTwitch(userId);
-      console.log('this-object', this.users);
     }
+    console.log(creationDate);
     return creationDate;
   }
   async getCreationDateFromTwitch(userId) {
-    // kraken endpoint
+    // The stupid new API can't fetch creation date (code commented just below
+    // this line), so we have to use the V5 API ("kraken").
+    //
+    // const url = `https://api.twitch.tv/helix/users?id=${userId}`;
+
     const url = `https://api.twitch.tv/kraken/users/${userId}`;
     const res = await fetch(url, {
       headers: {
-        'Client-Id': process.env.CLIENT_ID,
-        accept: 'application/vnd.twitchtv.v5+json',
+        'Client-ID': process.env.CLIENT_ID,
+        Accept: 'application/vnd.twitchtv.v5+json',
       },
     });
+
     const json = await res.json();
     return json.created_at;
   }
 
-  async onChatMessage(channelName, userState, message, self) {
-    const userId = userState['user-id'];
-    const userData = await this.getOrFetchUserCreatedDate(
-      userState.username.toLowerCase(),
-      userId
+  async onChatMessage(channelName, userstate, message, self) {
+    // Ignore messages from the bot.
+    if (self) return;
+
+    const username = userstate.username.toLowerCase();
+    const creationDate = await this.getOrFetchCreationDate(
+      username,
+      userstate['user-id']
     );
   }
   async initialize() {
