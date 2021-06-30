@@ -5,7 +5,6 @@ class BotState {
     this.validateEnvVars();
   }
   validateEnvVars() {
-    console.log('validate!');
     assert(
       !_.isNil(process.env.OAUTH),
       'You must have process.env.OAUTH set.  Do not include "oauth" in it.'

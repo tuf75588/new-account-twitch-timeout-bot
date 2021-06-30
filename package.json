@@ -11,8 +11,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "dotenv": "^10.0.0",
     "human-date": "^1.4.0",
     "lodash": "^4.17.21",
+    "node-fetch": "^2.6.1",
     "tmi.js": "^1.8.3"
   }
 }
